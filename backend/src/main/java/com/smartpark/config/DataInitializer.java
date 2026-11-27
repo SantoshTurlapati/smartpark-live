@@ -38,8 +38,16 @@ public class DataInitializer implements ApplicationRunner {
     var existingAdmin=users.findByEmailIgnoreCase(adminEmail);
     if (existingAdmin.isPresent()) {
       User admin=existingAdmin.get();
+      boolean changed=false;
+      if (admin.getRole()!=Role.ADMIN) {
+        admin.setRole(Role.ADMIN);
+        changed=true;
+      }
       if (!passwordEncoder.matches(adminPassword, admin.getPasswordHash())) {
         admin.setPasswordHash(passwordEncoder.encode(adminPassword));
+        changed=true;
+      }
+      if (changed) {
         users.save(admin);
       }
       return;

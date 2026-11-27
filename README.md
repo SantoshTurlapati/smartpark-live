@@ -73,7 +73,7 @@ This repository is prepared for a Docker-based Java 17 deployment. The backend D
 
 ### Deploy a temporary demo on Render
 
-The root `render.yaml` Blueprint provisions the Java backend and a free Render Postgres database in Singapore. In Render, create a new Blueprint from this repository and deploy it. Render generates a private `ADMIN_PASSWORD`; retrieve it from the service's Environment page to sign in as `admin@smartpark.com`. The production profile deliberately does not seed the publicly known demo admin password. The free backend may sleep when idle, and Render's free Postgres database expires 30 days after creation; this setup is for a temporary demo, not production.
+The root `render.yaml` Blueprint provisions the Java backend and a free Render Postgres database in Singapore. In Render, create a new Blueprint from this repository and deploy it. Render generates a private `ADMIN_PASSWORD`; retrieve it from the service's Environment page to sign in as `admin@smartpark.com` with **Admin** selected. On startup, the configured admin email is ensured to have the `ADMIN` role and configured password, including when a user with that email already exists. The production profile deliberately does not seed the publicly known demo admin password. The free backend may sleep when idle, and Render's free Postgres database expires 30 days after creation; this setup is for a temporary demo, not production.
 
 After deployment, set `window.SMARTPARK_API` in `js/config.js` to the backend's public `https://...onrender.com` URL and push that change to GitHub. GitHub Pages will then redeploy the frontend. The backend CORS configuration already allows the published GitHub Pages origin.
 
