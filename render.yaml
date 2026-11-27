@@ -17,7 +17,7 @@ services:
       - key: ADMIN_EMAIL
         value: admin@smartpark.com
       - key: ADMIN_PASSWORD
-        sync: false
+        generateValue: true
       - key: DB_HOST
         fromDatabase:
           name: smartpark-db
