@@ -71,6 +71,14 @@ AI-Smart-Parking-System/
 
 This repository is prepared for a Docker-based Java 17 deployment. The backend Dockerfile uses a Maven build image, so Maven does not need to be installed in the runtime image.
 
+### Deploy a temporary demo on Render
+
+The root `render.yaml` Blueprint provisions the Java backend and a free Render Postgres database in Singapore. In Render, create a new Blueprint from this repository and deploy it. The free backend may sleep when idle, and Render's free Postgres database expires 30 days after creation; this setup is for a temporary demo, not production.
+
+After deployment, set `window.SMARTPARK_API` in `js/config.js` to the backend's public `https://...onrender.com` URL and push that change to GitHub. GitHub Pages will then redeploy the frontend. The backend CORS configuration already allows the published GitHub Pages origin.
+
+This deployment uses a separate PostgreSQL profile. Local development continues to use the existing MariaDB/MySQL configuration.
+
 ### Before publishing
 
 1. Create a managed MySQL database with a database, username, and strong password. Do not expose your local XAMPP database to the internet.

@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: smartpark-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: CORS_ORIGINS
+        value: https://santoshturlapati.github.io
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_HOST
+        fromDatabase:
+          name: smartpark-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: smartpark-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: smartpark-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: smartpark-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: smartpark-db
+          property: password
+
+databases:
+  - name: smartpark-db
+    databaseName: smartpark
+    user: smartpark
+    plan: free
+    region: singapore
