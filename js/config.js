@@ -1,6 +1,8 @@
 /*
  * SmartPark deployment configuration.
- * Local development uses Spring Boot at http://localhost:8081.
- * After deploying the backend, replace this value with its public HTTPS URL.
+ * Local development uses Spring Boot; deployed pages use the hosted API.
  */
-window.SMARTPARK_API = "http://localhost:8081";
+const isLocalSmartPark = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+window.SMARTPARK_API = isLocalSmartPark
+  ? "http://localhost:8081"
+  : "https://smartpark-api-izfu.onrender.com";

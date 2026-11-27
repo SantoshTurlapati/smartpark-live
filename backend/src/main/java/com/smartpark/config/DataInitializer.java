@@ -35,7 +35,15 @@ public class DataInitializer implements ApplicationRunner {
       log.warn("Administrator seed skipped because ADMIN_EMAIL or ADMIN_PASSWORD is not configured");
       return;
     }
-    if (users.existsByEmailIgnoreCase(adminEmail)) return;
+    var existingAdmin=users.findByEmailIgnoreCase(adminEmail);
+    if (existingAdmin.isPresent()) {
+      User admin=existingAdmin.get();
+      if (!passwordEncoder.matches(adminPassword, admin.getPasswordHash())) {
+        admin.setPasswordHash(passwordEncoder.encode(adminPassword));
+        users.save(admin);
+      }
+      return;
+    }
     User admin=new User();
     admin.setName("Administrator");
     admin.setEmail(adminEmail);
