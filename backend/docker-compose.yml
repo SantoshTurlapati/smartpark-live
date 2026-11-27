@@ -1,0 +1,35 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: smartpark
+      MYSQL_USER: smartpark
+      MYSQL_PASSWORD: smartpark
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - smartpark_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    environment:
+      PORT: 8081
+      MYSQL_URL: jdbc:mysql://mysql:3306/smartpark?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      MYSQL_USERNAME: smartpark
+      MYSQL_PASSWORD: smartpark
+      JWT_SECRET: replace-with-a-long-random-production-secret
+      CORS_ORIGINS: http://localhost:5500,http://127.0.0.1:5500
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  smartpark_mysql:

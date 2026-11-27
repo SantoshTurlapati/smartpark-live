@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Smart Parking System</title>
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem("smartpark-theme");
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = savedTheme || systemTheme;
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+
+  <div id="app">
+
+    <!-- MAIN HOME PAGE -->
+    <section id="home-page" class="page">
+      <nav class="public-nav">
+        <a class="brand-link" href="#home" aria-label="SmartPark AI home">
+          <span class="brand-mark">P</span>
+          <span>SmartPark AI</span>
+        </a>
+        <button class="mobile-nav-toggle" type="button" data-action="toggle-nav"
+          aria-expanded="false" aria-controls="public-nav-links">Menu</button>
+        <div class="public-nav-links" id="public-nav-links">
+          <a href="#about">About</a>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div class="public-nav-actions">
+          <button class="theme-toggle" type="button" data-action="toggle-theme"
+            aria-label="Switch color theme" title="Switch color theme">
+            <span class="theme-icon" aria-hidden="true"></span>
+          </button>
+          <button class="btn btn-outline" type="button" data-page="login-page">Login</button>
+          <button class="btn" type="button" data-page="register-page">Create Account</button>
+        </div>
+      </nav>
+
+      <main class="hero hero-updated" id="home">
+        <div class="hero-content">
+          <span class="eyebrow">INTELLIGENT PARKING EXPERIENCE</span>
+
+          <h1>
+            Parking Made
+            <span>Smarter.</span>
+            <br>Life Made Easier.
+          </h1>
+
+          <p>
+            Discover available parking spaces, explore real locations,
+            book your parking and enjoy a smarter journey with AI Smart Parking.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn hero-btn"
+              onclick="showPage('login-page')">
+              Get Started →
+            </button>
+
+            <button class="btn btn-outline hero-secondary"
+              onclick="showPage('register-page')">
+              Create Account
+            </button>
+          </div>
+
+          <div class="hero-trust">
+            <span>✓ Smart Parking</span>
+            <span>✓ Easy Booking</span>
+            <span>✓ Live Location Maps</span>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-glow"></div>
+
+          <img
+            src="assets/images/parking-animation.gif"
+            alt="Animated AI Smart Parking experience"
+            class="parking-animation"
+          >
+
+          <div class="floating-label label-top">
+            <span class="live-dot"></span>
+            Smart Location
+          </div>
+
+          <div class="floating-label label-bottom">
+            <span>🚗</span> Find Your Parking
+          </div>
+        </div>
+      </main>
+
+      <section class="marketing-section about-section" id="about">
+        <div class="section-copy">
+          <span class="eyebrow">ABOUT SMARTPARK</span>
+          <h2>Less circling. More arriving.</h2>
+          <p>SmartPark brings parking owners, drivers and administrators together in one simple demo experience. Find a location, see its approval and availability, and follow a booking from reservation to exit.</p>
+        </div>
+        <div class="about-highlight">
+          <strong>One clear journey</strong>
+          <span>Discover → Reserve → Park → Go</span>
+        </div>
+      </section>
+
+      <section class="marketing-section" id="features">
+        <div class="section-heading-public">
+          <span class="eyebrow">BUILT FOR EVERY ROLE</span>
+          <h2>One platform. Three experiences.</h2>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>🚗 Customer</h3>
+            <p>Discover locations, compare availability, choose a slot and manage bookings.</p>
+          </article>
+          <article class="feature-card">
+            <h3>🏢 Parking Owner</h3>
+            <p>Manage locations, slots, operating hours, facilities and vehicle activity.</p>
+          </article>
+          <article class="feature-card">
+            <h3>🛡️ Administrator</h3>
+            <p>Review owners and locations, monitor bookings and respond to support requests.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="marketing-section how-section" id="how-it-works">
+        <div class="section-heading-public">
+          <span class="eyebrow">HOW IT WORKS</span>
+          <h2>Parking, without the guesswork.</h2>
+        </div>
+        <div class="steps-grid">
+          <article><span>01</span><h3>Find a place</h3><p>Search and filter parking by location, price and available slots.</p></article>
+          <article><span>02</span><h3>Choose a slot</h3><p>Select an available space and enter your visit details.</p></article>
+          <article><span>03</span><h3>Arrive and park</h3><p>Follow your booking status from reservation to vehicle exit.</p></article>
+        </div>
+      </section>
+
+      <section class="marketing-section faq-section" id="faq">
+        <div class="section-heading-public">
+          <span class="eyebrow">FAQ</span>
+          <h2>Questions, answered.</h2>
+        </div>
+        <details><summary>Can I book a location before it is approved?</summary><p>No. Pending or rejected locations are visible in this demo, but only approved locations can be booked.</p></details>
+        <details><summary>Is this connected to real parking sensors or payments?</summary><p>No. This is a frontend demo using browser storage. It does not process payments or connect to live sensors.</p></details>
+        <details><summary>Will my demo data appear on another device?</summary><p>No. Demo data is stored in this browser only and is not synchronized to a server.</p></details>
+      </section>
+
+      <section class="marketing-section contact-section" id="contact">
+        <div class="section-copy">
+          <span class="eyebrow">CONTACT & SUPPORT</span>
+          <h2>How can we help?</h2>
+          <p>Your email app will open with the request prepared. Review it and press Send to deliver it.</p>
+        </div>
+        <form id="contact-form" class="form-card" data-recipient-email="turlapatisantosh@gmail.com">
+          <label for="contact-name">Name</label>
+          <input id="contact-name" name="name" required maxlength="80">
+          <label for="contact-email">Email</label>
+          <input id="contact-email" name="email" type="email" required maxlength="120">
+          <label for="contact-subject">Subject</label>
+          <input id="contact-subject" name="subject" required maxlength="120">
+          <label for="contact-message">Message</label>
+          <textarea id="contact-message" name="message" rows="4" required maxlength="1000"></textarea>
+          <button class="btn" type="submit">Send Request</button>
+        </form>
+      </section>
+
+      <footer class="site-footer">
+        <a class="brand-link" href="#home"><span class="brand-mark">P</span><span>SmartPark AI</span></a>
+        <p>Frontend demonstration only. No live payments, sensors or account verification.</p>
+        <div class="site-footer-links"><a href="#features">Features</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div>
+        <address class="site-footer-contact">
+          <a href="mailto:turlapatisantosh@gmail.com">turlapatisantosh@gmail.com</a>
+          <a href="tel:9640036038">9640036038</a>
+          <a href="https://www.linkedin.com/in/n-v-s-s-santosh-turlapati-325259322/" target="_blank" rel="noopener noreferrer">LinkedIn profile</a>
+        </address>
+        <small>© 2026 SmartPark AI Demo</small>
+      </footer>
+    </section>
+
+    <!-- LOGIN PAGE -->
+    <section id="login-page" class="page auth-page hidden">
+      <div class="auth-card">
+        <button class="back-btn" onclick="showPage('home-page')">← Home</button>
+        <h2>Welcome Back</h2>
+        <p>Login to access your dashboard.</p>
+
+        <form id="login-form">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" name="email" autocomplete="username" required placeholder="Enter your email">
+
+          <label for="login-password">Password</label>
+          <div class="password-field">
+            <input type="password" id="login-password" name="password" autocomplete="current-password" required placeholder="Enter password">
+            <button type="button" class="password-toggle" data-action="toggle-password" data-target="login-password">Show</button>
+          </div>
+
+          <label for="login-role">Login As</label>
+          <select id="login-role" name="role" required>
+            <option value="customer">Customer</option>
+            <option value="owner">Parking Owner</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <button type="submit" class="btn auth-submit">Login</button>
+        </form>
+        <button type="button" class="text-button forgot-link" data-action="forgot-password">Forgot password?</button>
+
+        <p class="auth-switch">
+          Don't have an account?
+          <a href="#" data-page="register-page">Register</a>
+        </p>
+        <p id="login-message" class="message"></p>
+        <p class="demo-note">Demo only: passwords are stored in this browser, not securely on a server.</p>
+      </div>
+    </section>
+
+    <!-- REGISTRATION PAGE -->
+    <section id="register-page" class="page auth-page hidden">
+      <div class="auth-card">
+        <button class="back-btn" onclick="showPage('home-page')">← Home</button>
+        <h2>Create Account</h2>
+        <p>Register as a customer or parking owner.</p>
+
+        <form id="register-form">
+          <label for="register-name">Full Name</label>
+          <input type="text" id="register-name" name="name" autocomplete="name" required maxlength="80" placeholder="Enter your name">
+
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" name="email" autocomplete="email" required maxlength="120" placeholder="Enter your email">
+
+          <label for="register-password">Password</label>
+          <div class="password-field">
+            <input type="password" id="register-password" name="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters">
+            <button type="button" class="password-toggle" data-action="toggle-password" data-target="register-password">Show</button>
+          </div>
+
+          <label for="register-confirm-password">Confirm Password</label>
+          <div class="password-field">
+            <input type="password" id="register-confirm-password" name="confirmPassword" autocomplete="new-password" required minlength="8" placeholder="Repeat your password">
+            <button type="button" class="password-toggle" data-action="toggle-password" data-target="register-confirm-password">Show</button>
+          </div>
+
+          <label for="register-role">Register As</label>
+          <select id="register-role" name="role" required>
+            <option value="customer">Customer</option>
+            <option value="owner">Parking Owner</option>
+          </select>
+
+          <button type="submit" class="btn auth-submit">Create Account</button>
+        </form>
+
+        <p class="auth-switch">
+          Already have an account?
+          <a href="#" data-page="login-page">Login</a>
+        </p>
+        <p id="register-message" class="message"></p>
+        <p class="demo-note">Demo only: account data stays in this browser.</p>
+      </div>
+    </section>
+
+    <!-- DASHBOARD PAGE -->
+    <section id="dashboard-page" class="page hidden">
+      <div id="dashboard-root"></div>
+    </section>
+
+    <div id="app-modal-backdrop" class="modal-backdrop hidden" aria-hidden="true">
+      <section id="app-modal" class="app-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button type="button" class="modal-close" data-action="close-modal" aria-label="Close dialog">×</button>
+        <h2 id="modal-title"></h2>
+        <div id="modal-content"></div>
+        <div id="modal-actions" class="modal-actions"></div>
+      </section>
+    </div>
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
