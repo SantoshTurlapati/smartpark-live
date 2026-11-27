@@ -14,6 +14,10 @@ services:
         value: https://santoshturlapati.github.io
       - key: JWT_SECRET
         generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@smartpark.com
+      - key: ADMIN_PASSWORD
+        sync: false
       - key: DB_HOST
         fromDatabase:
           name: smartpark-db
