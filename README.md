@@ -1,6 +1,7 @@
 # AI Smart Parking System
 A responsive frontend with a Spring Boot, JWT and MySQL backend.
 
+LINK:-https://santoshturlapati.github.io/smartpark-live/
 ## Run locally
 
 ### Frontend
