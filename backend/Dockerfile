@@ -2,8 +2,9 @@
 FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
 COPY pom.xml .
+COPY maven-settings.xml /tmp/maven-settings.xml
 COPY src ./src
-RUN mvn -B clean package -DskipTests
+RUN mvn -s /tmp/maven-settings.xml -B clean package -DskipTests
 
 # Run with a smaller Java 17 runtime image
 FROM eclipse-temurin:17-jre
