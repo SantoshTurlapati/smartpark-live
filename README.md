@@ -71,13 +71,36 @@ AI-Smart-Parking-System/
 
 This repository is prepared for a Docker-based Java 17 deployment. The backend Dockerfile uses a Maven build image, so Maven does not need to be installed in the runtime image.
 
-### Deploy a temporary demo on Render
+### Run the backend on Oracle Cloud Always Free
 
-The root `render.yaml` Blueprint provisions the Java backend and a free Render Postgres database in Singapore. In Render, create a new Blueprint from this repository and deploy it. Render generates a private `ADMIN_PASSWORD`; retrieve it from the service's Environment page to sign in as `admin@smartpark.com` with **Admin** selected. On startup, the configured admin email is ensured to have the `ADMIN` role and configured password, including when a user with that email already exists. The production profile deliberately does not seed the publicly known demo admin password. The Docker build resolves Maven Central dependencies through Google's Maven Central mirror to reduce rate-limit failures. The free backend may sleep when idle, and Render's free Postgres database expires 30 days after creation; this setup is for a temporary demo, not production.
+`compose.oracle.yaml` runs the Java API, PostgreSQL, and Caddy HTTPS reverse proxy on one Oracle Cloud VM. The API and database are not exposed directly to the internet; Caddy handles public HTTPS and the database data is stored in a persistent Docker volume.
 
-After deployment, set `window.SMARTPARK_API` in `js/config.js` to the backend's public `https://...onrender.com` URL and push that change to GitHub. GitHub Pages will then redeploy the frontend. The backend CORS configuration already allows the published GitHub Pages origin.
+1. Sign up for Oracle Cloud Free Tier or sign in to your existing account. Choose only resources marked **Always Free Eligible**; do not upgrade the account or create paid resources. Oracle may require a payment card for identity verification. Its Free Tier page says the card is not charged unless the account is upgraded. Always Free compute is only available in the account's home region and may be capacity-limited. Oracle may reclaim Always Free instances that remain below its published CPU, network, and (for Arm instances) memory utilization thresholds for seven days.
+2. In your home region, create an Always Free eligible Ubuntu VM. For the Ampere A1 shape, stay within the Always Free total of 2 OCPUs and 12 GB RAM. Assign a public IPv4 address and allow inbound TCP ports 80 and 443 in the VM's subnet/network security rules. Restrict SSH (TCP 22) to your own IP address.
+3. Connect to the VM over SSH. Install Docker Engine and the Docker Compose plugin using Docker's Ubuntu repository:
+   ```sh
+   sudo apt-get update
+   sudo apt-get install -y ca-certificates curl
+   sudo install -m 0755 -d /etc/apt/keyrings
+   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+   sudo chmod a+r /etc/apt/keyrings/docker.asc
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   sudo apt-get update
+   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+   sudo systemctl enable --now docker
+   ```
+   Clone this repository and enter its root directory:
+   ```sh
+   git clone https://github.com/SantoshTurlapati/smartpark-live.git
+   cd smartpark-live
+   ```
+4. Create `.env.oracle` from `.env.oracle.example`. Set `API_DOMAIN` to `api.<VM-public-IP-with-dashes>.sslip.io` (for example, replace the example IP with the VM's actual public IPv4 address). Generate unique random values for `DB_PASSWORD`, `ADMIN_PASSWORD`, and `JWT_SECRET`; keep this file private and never commit it.
+5. Start the stack with `sudo docker compose --env-file .env.oracle -f compose.oracle.yaml up --build -d`. Caddy obtains and renews the HTTPS certificate automatically. Check `https://<API_DOMAIN>/api/health`.
+6. Once the new API is responding over HTTPS, update `window.SMARTPARK_API` in `js/config.js` to `https://<API_DOMAIN>` and push the change. GitHub Pages will redeploy the frontend. Keep the existing Render service until the new API and frontend have both been verified.
 
-This deployment uses a separate PostgreSQL profile. Local development continues to use the existing MariaDB/MySQL configuration.
+The Oracle-hosted database starts empty; the admin account is seeded from `ADMIN_EMAIL` and `ADMIN_PASSWORD` on startup. Existing users and parking data in Render are not copied automatically. The Oracle Always Free offer is subject to capacity, account verification, usage limits, and idle-instance reclamation; it is not a guaranteed uptime service.
+
+Local development continues to use the existing MariaDB/MySQL configuration. Render's earlier `render.yaml` and PostgreSQL profile are retained for rollback; the current public frontend remains pointed at Render until the Oracle VM and HTTPS URL are available.
 
 ### Before publishing
 
